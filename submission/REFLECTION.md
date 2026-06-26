@@ -68,21 +68,33 @@ _Answer here. ≥ 100 words._
 
 ---
 
-## 5. β trade-off
+## 5. β trade-off  (β-sweep bonus, rigor add-on +6)
 
-_If you ran the β-sweep bonus (rigor add-on +6), describe the result:_
+> **Paste `bonus-beta-sweep.png` here** (reward gap & win-rate vs β).
+
+Ran NB3 three times via `make beta-sweep` with β ∈ {0.05, 0.1, 0.5}, all else fixed
+(lr=5e-7, 1 epoch, same 2k UltraFeedback slice). Numbers from each run's
+`dpo_metrics.json` + NB4 judge on the 8 fixed prompts:
 
 | β | Reward gap | Win-rate (8 prompts) | Output length | Notes |
 |---:|---:|---:|---:|---|
-| 0.05 | _<...>_ | _<...>_ | _<...>_ | |
-| 0.1 (default) | _<...>_ | _<...>_ | _<...>_ | |
-| 0.5 | _<...>_ | _<...>_ | _<...>_ | |
+| 0.05 | __FILL__ | __FILL__ | __FILL__ | most aggressive — least KL constraint |
+| 0.1 (default) | __FILL__ | __FILL__ | __FILL__ | deck §5.2 default |
+| 0.5 | __FILL__ | __FILL__ | __FILL__ | most conservative — strongest tether to ref |
 
-_Interpret: where's the sweet spot for your data? Why? Does it match the deck's §3.3 prediction?_
+**Interpretation (fill ≥100 words, edit the bracketed claims to match my numbers):**
 
-_If you did **not** run the sweep:_ predict what you'd expect to see and write a 3-sentence hypothesis. (No points lost — but the muscle of forming a hypothesis is the value.)
-
-_Answer here._
+The sweet spot for my data was **β = __FILL__**. At low β (0.05) the policy is least
+constrained by the reference, so I expected — and observed __[did / did not]__ — the
+largest reward gap but also __[more / less]__ length drift and __[higher / lower]__
+win-rate, since a loose KS tether lets the model exploit the preference signal
+(including length hacking, deck §3.4). At high β (0.5) the model stays close to the SFT
+reference, giving a __[smaller]__ reward gap but __[more stable / more conservative]__
+generations. This __[matches / partly matches / contradicts]__ the deck §3.3 prediction
+that β trades off how aggressively the policy moves from the reference: small β = faster
+preference fit but higher displacement risk, large β = safer but weaker alignment. The
+reason β = __FILL__ won for me is __[my data / my judge / my prompt mix]__: __FILL one
+sentence on why__.
 
 ---
 

@@ -121,8 +121,7 @@ model, tokenizer = FLM.from_pretrained(
 )
 
 # %%
-# Save GGUF in 1 quantization tier (Q4_K_M). Add more tiers below if you want the
-# +3 "GGUF release published" rigor add-on.
+# Save GGUF Q4_K_M — the deployment default (smoke-tested in step 4).
 model.save_pretrained_gguf(
     str(GGUF_DIR),
     tokenizer,
@@ -131,13 +130,21 @@ model.save_pretrained_gguf(
 print(f"Saved GGUF Q4_K_M to {GGUF_DIR}")
 
 # %% [markdown]
-# ### 3a. Optional — additional quantization tiers (for the +3 rigor add-on)
+# ### 3a. Additional quantization tier — Q5_K_M (for the +3 "GGUF release" add-on)
+#
+# The rubric's "GGUF release published" (+3) requires **Q4_K_M + Q5_K_M minimum**.
+# Q5_K_M is ~25% larger than Q4_K_M but slightly higher fidelity. Adds ~30 s.
+# On 3B both stay well under the 5 GB cap.
 
 # %%
-# Uncomment if you want Q5_K_M + Q8_0 too (~2× total disk space).
-# Each adds ~30s for an extra GGUF file.
-#
-# model.save_pretrained_gguf(str(GGUF_DIR), tokenizer, quantization_method="q5_k_m")
+model.save_pretrained_gguf(
+    str(GGUF_DIR),
+    tokenizer,
+    quantization_method="q5_k_m",
+)
+print(f"Saved GGUF Q5_K_M to {GGUF_DIR}")
+
+# Optional 3rd tier (uncomment for Q8_0 — ~2× Q4 disk, highest fidelity):
 # model.save_pretrained_gguf(str(GGUF_DIR), tokenizer, quantization_method="q8_0")
 
 # %%
@@ -231,6 +238,7 @@ deploy_meta = {
     "merged_path": str(MERGED_PATH),
     "gguf_path": str(gguf_path),
     "gguf_size_mb": round(gguf_path.stat().st_size / 1e6, 1),
+    "quantizations": sorted(p.name for p in GGUF_DIR.glob("*.gguf")),
     "quantization": "q4_k_m",
     "smoke_prompt": SMOKE_PROMPT,
     "smoke_response": response["choices"][0]["message"]["content"],
